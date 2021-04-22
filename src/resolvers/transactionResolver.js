@@ -30,14 +30,12 @@ export const transactionResolver = {
         throw new AuthenticationError(`No token`)
       }
 
-      console.log(`context.user`, context.user)
       const {
         user: { _id }
       } = context.user
 
       const { type, amount, dd, mm, yyyy, category } = args
 
-      console.log(`args`, args)
       let transaction = new Transaction({
         user: _id,
         type,
@@ -49,6 +47,21 @@ export const transactionResolver = {
       })
       await transaction.save()
       return { message: 'created' }
+    },
+    deleteTransaction: async (_, args, context) => {
+      if (!context || !context.user) {
+        throw new AuthenticationError(`No token`)
+      } else {
+        const transactionToDelete = await Transaction.findOne({ _id: args.id })
+
+        if (transactionToDelete) {
+          await transactionToDelete.remove()
+
+          return { message: 'DELETED' }
+        } else {
+          return { message: 'Transaction Not Found' }
+        }
+      }
     }
   }
 }

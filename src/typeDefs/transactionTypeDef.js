@@ -17,13 +17,13 @@ export const transactionTypeDef = gql`
   type Transaction {
     _id: ID!
     type: TypeOfTransaction
-    category: String!
+    category: String
     amount: String!
     dd: String!
     mm: String!
     yyyy: String!
   }
-  type RETURN_CREATE_STATUS {
+  type RETURN_STATUS {
     message: String!
   }
   enum TypeOfTransaction {
@@ -36,10 +36,11 @@ export const transactionTypeDef = gql`
     createTransaction(
       type: TypeOfTransaction!
       amount: String!
-      category: String!
+      category: String
       dd: String!
       mm: String!
       yyyy: String!
-    ): RETURN_CREATE_STATUS
+    ): RETURN_STATUS
+    deleteTransaction(id: ID!): RETURN_STATUS
   }
 `
