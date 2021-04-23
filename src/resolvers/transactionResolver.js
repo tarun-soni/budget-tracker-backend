@@ -48,6 +48,33 @@ export const transactionResolver = {
       await transaction.save()
       return { message: 'created' }
     },
+
+    updateTransaction: async (_, args, context) => {
+      if (!context || !context.user) {
+        throw new AuthenticationError(`No token`)
+      }
+
+      const {
+        user: { _id }
+      } = context.user
+
+      const transactionToUpdate = await Transaction.findOne({ _id: args.id })
+
+      if (transactionToUpdate) {
+        if (String(transactionToUpdate.user) === _id) {
+          transactionToUpdate.type = args.type
+          transactionToUpdate.amount = args.amount
+          transactionToUpdate.category = args.category
+          await transactionToUpdate.save()
+          return { message: 'updated' }
+        } else {
+          throw new AuthenticationError(`You're not authorized`)
+        }
+      } else {
+        return { message: 'Not Found' }
+      }
+    },
+
     deleteTransaction: async (_, args, context) => {
       if (!context || !context.user) {
         throw new AuthenticationError(`No token`)

@@ -42,5 +42,12 @@ export const transactionTypeDef = gql`
       yyyy: String!
     ): RETURN_STATUS
     deleteTransaction(id: ID!): RETURN_STATUS
+
+    updateTransaction(
+      id: ID
+      type: String
+      amount: String
+      category: String
+    ): RETURN_STATUS
   }
 `
