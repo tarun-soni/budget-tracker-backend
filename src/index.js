@@ -90,6 +90,7 @@ const startServer = async () => {
       if (auth) {
         try {
           const token = auth.split(' ')[1]
+
           const user = jwt.verify(token, process.env.JWT_SECRET)
           return { user }
         } catch (error) {
