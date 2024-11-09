@@ -5,6 +5,7 @@ import { expressjwt } from 'express-jwt'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import { mergeResolvers, mergeTypeDefs } from '@graphql-tools/merge'
+import rateLimit from 'express-rate-limit'
 
 import { userResolvers } from './resolvers/userResolvers.js'
 import { userTypeDefs } from './typeDefs/userTypeDefs.js'
@@ -44,6 +45,27 @@ app.use(
   })
 )
 
+const TEST_RATE_LIMIT = true
+const NUMBER_OF_REQUESTS = 10
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  limit: 1000
+})
+
+app.use(limiter)
+
+const graphqlLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 1000, // Limit each IP to 50 GraphQL requests per windowMs
+  message: 'Too many GraphQL requests from this IP, please try again later.'
+})
+
+app.use('/graphql', graphqlLimiter)
+
 const startServer = async () => {
   const db = mongoose.connection
   db.on('error', console.error.bind(console, 'connection error:'))
@@ -60,6 +82,10 @@ const startServer = async () => {
     resolvers: mergeResolvers([userResolvers, transactionResolver]),
     context: ({ req }) => {
       const auth = req.headers.authorization || ''
+
+      if (req.rateLimit && req.rateLimit.remaining === 0) {
+        throw new Error('Rate limit exceeded')
+      }
 
       if (auth) {
         try {
