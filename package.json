@@ -7,7 +7,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node build/index.js",
+    "build": "babel src -d build",
+    "test:rate-limit": "node build/test-rate-limit.js",
+    "dev": "nodemon --exec babel-node src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +30,12 @@
     "node-fetch": "^3.3.2"
   },
   "engines": {
-    "node": "14"
+    "node": "16"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "@babel/node": "^7.26.0",
+    "@babel/preset-env": "^7.26.0"
   }
 }
