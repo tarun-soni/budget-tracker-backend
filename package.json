@@ -30,7 +30,7 @@
     "node-fetch": "^3.3.2"
   },
   "engines": {
-    "node": ">=21.0.0"
+    "node": ">=20.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.9",
