@@ -19,7 +19,16 @@ dotenv.config()
 const PORT = process.env.PORT || 1227
 
 const app = express()
-app.use(cors())
+
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3000',
+      'https://budget-tracker-backend-delta.vercel.app'
+    ],
+    credentials: true
+  })
+)
 
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
@@ -115,13 +124,11 @@ const startServer = async () => {
 
   const __dirname = path.resolve()
 
-  app.listen({ port: PORT }, () => {
-    console.log(`
-    🚀  Server is running!
-    🔉  Listening on port ${PORT}
-    📭  Query at http://localhost:${PORT}${server.graphqlPath}
-  `)
-  })
+  if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`)
+    })
+  }
 
   if (process.env.NODE_ENV === 'production') {
     app.get('*', (req, res) => {
@@ -135,3 +142,5 @@ const startServer = async () => {
 }
 
 startServer()
+
+export default app
