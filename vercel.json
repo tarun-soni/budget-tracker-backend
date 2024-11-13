@@ -4,6 +4,10 @@
     {
       "src": "build/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "build/check-db-connection.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
